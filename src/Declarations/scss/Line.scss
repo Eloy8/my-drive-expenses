@@ -1,0 +1,33 @@
+.line {
+  width: calc(100% - 24px) !important;
+  margin: 12px;
+  &--icon {
+    display: inline;
+    vertical-align: middle;
+    margin: 2vh 1vw 0 0;
+  }
+  &--input {
+    &-small {
+      width: 5vw;
+    }
+    &-medium {
+      width: 12vw;
+    }
+  }
+  &--checkbox {
+    color: rgba(0, 0, 0, 0.38);
+    display: inline;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    &-active {
+      color: rgb(0, 0, 0);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .line {
+    &--icon {
+      margin: 0;
+    }
+  }
+}
