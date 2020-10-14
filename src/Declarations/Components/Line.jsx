@@ -14,6 +14,8 @@ import PlaceIcon from "@material-ui/icons/Place";
 import EditIcon from "@material-ui/icons/Edit";
 import DriveExpensesValidation from "../utils/DriveExpensesValidation";
 import { Formik } from "formik";
+import { useSelector, useDispatch } from "react-redux";
+import allActions from "../../actions/index";
 import "../scss/Line.scss";
 
 const Line = ({
@@ -21,16 +23,16 @@ const Line = ({
   createOrUpdateDriveExpenses,
   deleteDriveExpenses,
   expensesLine,
-  editMode = false,
-  setEditMode,
-  setAddMode,
-  currentlyEditEntryId = null,
-  setCurrentlyEditEntryId = null,
 }) => {
+  const editMode = useSelector((state) => state.driveExpenses.editMode);
+  const currentEditId = useSelector(
+    (state) => state.driveExpenses.currentEditId
+  );
   const [initialValues, setInitialValues] = useState(null);
   const isInAddOrEditMode =
-    addMode ||
-    (expensesLine && editMode && currentlyEditEntryId === expensesLine.id);
+    addMode || (expensesLine && editMode && currentEditId === expensesLine.id);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     function checkForContent() {
@@ -54,17 +56,17 @@ const Line = ({
 
   const closeAddOrEdit = () => {
     if (addMode) {
-      setAddMode(false);
+      dispatch(allActions.driveExpensesActions.setAddMode(false));
     }
     if (editMode) {
-      setEditMode(false);
-      setCurrentlyEditEntryId(null);
+      dispatch(allActions.driveExpensesActions.setEditMode(false));
+      dispatch(allActions.driveExpensesActions.setCurrentEditId(null));
     }
   };
 
   const editCurrentEntry = (entryId) => {
-    setEditMode(true);
-    setCurrentlyEditEntryId(entryId);
+    dispatch(allActions.driveExpensesActions.setEditMode(true));
+    dispatch(allActions.driveExpensesActions.setCurrentEditId(entryId));
   };
 
   const addOrEditCurrentEntry = (

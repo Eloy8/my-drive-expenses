@@ -1,32 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Typography from "@material-ui/core/Typography";
 import DeclarationFooter from "./Components/DeclarationFooter";
 import DeclarationHeader from "./Components/DeclarationHeader";
 import DriveExpenseService from "./services/DriveExpenseService";
+import { useSelector, useDispatch } from "react-redux";
 import List from "./Components/List";
 import "./scss/DeclarationDashboard.scss";
-import Typography from "@material-ui/core/Typography";
+import allActions from "../actions";
 
 const Dashboard = () => {
-  const [expensesList, setExpensesList] = useState(null);
-  const [addMode, setAddMode] = useState(null);
-  const [editMode, setEditMode] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const expensesList = useSelector((state) => state.driveExpenses.expensesList);
+  const isLoading = useSelector((state) => state.driveExpenses.isLoading);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     //Initially checks for localstorage data
     const data = DriveExpenseService.getDriveExpenses();
-    setExpensesList(data);
-    setIsLoading(false);
+    dispatch(allActions.driveExpensesActions.setExpensesList(data));
+    dispatch(allActions.driveExpensesActions.setIsLoading(false));
     // Listens to localstorage changes, removed listener upon unmount
     window.addEventListener("storage", localStorageEventListener);
     return () =>
       window.removeEventListener("storage", localStorageEventListener);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const localStorageEventListener = (e) => {
     const data = DriveExpenseService.getDriveExpenses();
-    setExpensesList(data);
+    dispatch(allActions.driveExpensesActions.setExpensesList(data));
   };
 
   const createOrUpdateDriveExpenses = (
@@ -78,31 +81,22 @@ const Dashboard = () => {
 
   return (
     <React.Fragment>
-      <DeclarationHeader
-        addMode={addMode}
-        editMode={editMode}
-        setAddMode={setAddMode}
-      />
+      <DeclarationHeader />
       {isLoading && (
         <div className="dashboard--loading">
           <CircularProgress color="primary" disableShrink size="16vh" />
           <Typography variant="h6" color="primary">
-            Loading...
+            Aan het laden...
           </Typography>
         </div>
       )}
       {!isLoading && (
         <List
-          addMode={addMode}
-          setAddMode={setAddMode}
-          editMode={editMode}
-          setEditMode={setEditMode}
           createOrUpdateDriveExpenses={createOrUpdateDriveExpenses}
           deleteDriveExpenses={deleteDriveExpenses}
-          expensesList={expensesList}
         />
       )}
-      {expensesList && <DeclarationFooter expensesList={expensesList} />}
+      {expensesList && <DeclarationFooter />}
     </React.Fragment>
   );
 };

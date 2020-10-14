@@ -4,9 +4,12 @@ import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
 import TimelineIcon from "@material-ui/icons/Timeline";
 import DirectionsCarIcon from "@material-ui/icons/DirectionsCar";
 import HomeWorkIcon from "@material-ui/icons/HomeWork";
+import { useSelector } from "react-redux";
 import "../scss/DeclarationFooter.scss";
 
-const DeclarationFooter = ({ expensesList }) => {
+const DeclarationFooter = () => {
+  const expensesList = useSelector((state) => state.driveExpenses.expensesList);
+
   const calculateAmountOfKilometers = () => {
     let sum = 0;
     for (let i = 0; i < expensesList.length; i++) {
@@ -14,7 +17,7 @@ const DeclarationFooter = ({ expensesList }) => {
       const totalDistance = expensesList[i].isRetour
         ? distanceInKilometer * 2
         : distanceInKilometer;
-      // Needs to be multified by 1, otherwise will be concatenated as string to sum
+      // Needs to be multified by 1, otherwise the result will be concatenated as string
       sum += totalDistance * 1;
     }
     return sum;
