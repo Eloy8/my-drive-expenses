@@ -28,10 +28,43 @@ const setIsLoading = (isLoading) => {
   };
 };
 
+const editCurrentEntry = (id) => {
+  return {
+    type: ActionTypes.editCurrentEntry,
+    payload: id
+  };
+};
+
+const exitCreateOrUpdateMode = () => {
+  return {
+    type: ActionTypes.exitCreateOrUpdateMode,
+  };
+};
+
 const setCurrentEditId = (currentEditId) => {
   return {
     type: ActionTypes.setCurrentEditId,
     payload: currentEditId,
+  };
+};
+
+const createOrUpdateDriveExpenses = (data) => {
+  return {
+    type: ActionTypes.createOrUpdateDriveExpenses,
+    payload: data,
+  };
+};
+
+const readDriveExpenses = () => {
+  return {
+    type: ActionTypes.readDriveExpenses,
+  };
+};
+
+const deleteDriveExpenses = (id) => {
+  return {
+    type: ActionTypes.deleteDriveExpenses,
+    payload: id,
   };
 };
 
@@ -41,4 +74,9 @@ export default {
   setExpensesList,
   setIsLoading,
   setCurrentEditId,
+  editCurrentEntry,
+  exitCreateOrUpdateMode,
+  createOrUpdateDriveExpenses,
+  readDriveExpenses,
+  deleteDriveExpenses,
 };

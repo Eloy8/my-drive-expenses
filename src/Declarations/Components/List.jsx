@@ -6,7 +6,7 @@ import Line from "./Line";
 import { useSelector } from "react-redux";
 import "../scss/List.scss";
 
-const List = ({ createOrUpdateDriveExpenses, deleteDriveExpenses }) => {
+const List = () => {
   const addMode = useSelector((state) => state.driveExpenses.addMode);
   const editMode = useSelector((state) => state.driveExpenses.editMode);
   const expensesList = useSelector((state) => state.driveExpenses.expensesList);
@@ -28,19 +28,13 @@ const List = ({ createOrUpdateDriveExpenses, deleteDriveExpenses }) => {
       )}
       {!expensesListIsEmpty &&
         expensesList.map((expensesLine) => (
-          <Line
-            createOrUpdateDriveExpenses={createOrUpdateDriveExpenses}
-            deleteDriveExpenses={deleteDriveExpenses}
-            key={expensesLine.id}
-            expensesLine={expensesLine}
-          />
+          <Line key={expensesLine.id} expensesLine={expensesLine} />
         ))}
       {addMode && (
         <Line
-          createOrUpdateDriveExpenses={createOrUpdateDriveExpenses}
-          expensesLine={expensesList && expensesList[editMode]}
-          addMode
           key={expensesList && expensesList.length + 1}
+          addMode
+          expensesLine={expensesList && expensesList[editMode]}
         />
       )}
     </div>

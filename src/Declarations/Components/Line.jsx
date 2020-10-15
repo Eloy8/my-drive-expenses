@@ -18,12 +18,7 @@ import { useSelector, useDispatch } from "react-redux";
 import allActions from "../../actions/index";
 import "../scss/Line.scss";
 
-const Line = ({
-  addMode = false,
-  createOrUpdateDriveExpenses,
-  deleteDriveExpenses,
-  expensesLine,
-}) => {
+const Line = ({ addMode = false, expensesLine }) => {
   const editMode = useSelector((state) => state.driveExpenses.editMode);
   const currentEditId = useSelector(
     (state) => state.driveExpenses.currentEditId
@@ -54,42 +49,6 @@ const Line = ({
     checkForContent();
   }, [expensesLine]);
 
-  const closeAddOrEdit = () => {
-    if (addMode) {
-      dispatch(allActions.driveExpensesActions.setAddMode(false));
-    }
-    if (editMode) {
-      dispatch(allActions.driveExpensesActions.setEditMode(false));
-      dispatch(allActions.driveExpensesActions.setCurrentEditId(null));
-    }
-  };
-
-  const editCurrentEntry = (entryId) => {
-    dispatch(allActions.driveExpensesActions.setEditMode(true));
-    dispatch(allActions.driveExpensesActions.setCurrentEditId(entryId));
-  };
-
-  const addOrEditCurrentEntry = (
-    entryId,
-    departureZipcode,
-    departureHouseNumber,
-    arrivalZipcode,
-    arrivalHouseNumber,
-    totalDrivingDistance,
-    isRetour
-  ) => {
-    createOrUpdateDriveExpenses(
-      entryId,
-      departureZipcode,
-      departureHouseNumber,
-      arrivalZipcode,
-      arrivalHouseNumber,
-      totalDrivingDistance,
-      isRetour
-    );
-    closeAddOrEdit();
-  };
-
   const catchEnter = (e, callback) => {
     if (e.key === "Enter") {
       callback();
@@ -101,15 +60,19 @@ const Line = ({
       {initialValues && (
         <Formik
           onSubmit={(values) => {
-            addOrEditCurrentEntry(
-              values.entryId,
-              values.departureZipcode,
-              values.departureHouseNumber,
-              values.arrivalZipcode,
-              values.arrivalHouseNumber,
-              values.totalDrivingDistance,
-              values.isRetour
+            const data = {
+              id: values.entryId,
+              departureZipcode: values.departureZipcode,
+              departureHouseNumber: values.departureHouseNumber,
+              arrivalZipcode: values.arrivalZipcode,
+              arrivalHouseNumber: values.arrivalHouseNumber,
+              totalDrivingDistance: values.totalDrivingDistance,
+              isRetour: values.isRetour,
+            };
+            dispatch(
+              allActions.driveExpensesActions.createOrUpdateDriveExpenses(data)
             );
+            dispatch(allActions.driveExpensesActions.exitCreateOrUpdateMode());
           }}
           initialValues={initialValues}
           validationSchema={DriveExpensesValidation}
@@ -260,7 +223,11 @@ const Line = ({
                             onClick={() =>
                               isInAddOrEditMode
                                 ? handleSubmit()
-                                : editCurrentEntry(values.entryId)
+                                : dispatch(
+                                    allActions.driveExpensesActions.editCurrentEntry(
+                                      values.entryId
+                                    )
+                                  )
                             }
                           >
                             {isInAddOrEditMode ? <CheckIcon /> : <EditIcon />}
@@ -275,8 +242,14 @@ const Line = ({
                           <Button
                             onClick={() =>
                               isInAddOrEditMode
-                                ? closeAddOrEdit()
-                                : deleteDriveExpenses(values.entryId)
+                                ? dispatch(
+                                    allActions.driveExpensesActions.exitCreateOrUpdateMode()
+                                  )
+                                : dispatch(
+                                    allActions.driveExpensesActions.deleteDriveExpenses(
+                                      values.entryId
+                                    )
+                                  )
                             }
                           >
                             {isInAddOrEditMode ? <BlockIcon /> : <DeleteIcon />}
