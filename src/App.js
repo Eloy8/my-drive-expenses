@@ -1,15 +1,18 @@
 import React from "react";
-import "./Declarations/scss/App.scss";
-import DeclarationDashboard from "./Declarations/DeclarationDashboard";
-
-import { createStore } from "redux";
-import rootReducer from "./reducers";
+import { composeWithDevTools } from "redux-devtools-extension";
 import { Provider } from "react-redux";
+import { applyMiddleware, createStore } from "redux";
+import thunk from "redux-thunk";
+import DeclarationDashboard from "./Declarations/DeclarationDashboard";
+import rootReducer from "./reducers";
+import "./Declarations/scss/App.scss";
 
 // Store will be added for the Redux DevTools browser extension
+const middleware = [thunk];
+
 const store = createStore(
   rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  composeWithDevTools(applyMiddleware(...middleware))
 );
 
 const App = () => {

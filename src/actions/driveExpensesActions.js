@@ -1,4 +1,5 @@
 import ActionTypes from "./actionTypes";
+import DriveExpenseService from "../Declarations/services/DriveExpenseService";
 
 const setAddMode = (addMode) => {
   return {
@@ -31,7 +32,7 @@ const setIsLoading = (isLoading) => {
 const editCurrentEntry = (id) => {
   return {
     type: ActionTypes.editCurrentEntry,
-    payload: id
+    payload: id,
   };
 };
 
@@ -48,24 +49,51 @@ const setCurrentEditId = (currentEditId) => {
   };
 };
 
-const createOrUpdateDriveExpenses = (data) => {
-  return {
-    type: ActionTypes.createOrUpdateDriveExpenses,
+const createOrUpdateDriveExpenses = (driveExpenses) => async (dispatch) => {
+  dispatch({ type: ActionTypes.setIsLoading, payload: true });
+  const data = await DriveExpenseService.createOrUpdateDriveExpenses(
+    driveExpenses
+  );
+  if (Array.isArray(data)) {
+    return dispatch({
+      type: ActionTypes.createOrUpdateDriveExpensesSuccess,
+      payload: data,
+    });
+  }
+  return dispatch({
+    type: ActionTypes.createOrUpdateDriveExpensesError,
     payload: data,
-  };
+  });
 };
 
-const readDriveExpenses = () => {
-  return {
-    type: ActionTypes.readDriveExpenses,
-  };
+const readDriveExpenses = () => async (dispatch) => {
+  dispatch({ type: ActionTypes.setIsLoading, payload: true });
+  const data = await DriveExpenseService.readDriveExpenses();
+  if (Array.isArray(data)) {
+    return dispatch({
+      type: ActionTypes.readDriveExpensesSuccess,
+      payload: data,
+    });
+  }
+  return dispatch({
+    type: ActionTypes.readDriveExpensesError,
+    payload: data,
+  });
 };
 
-const deleteDriveExpenses = (id) => {
-  return {
-    type: ActionTypes.deleteDriveExpenses,
-    payload: id,
-  };
+const deleteDriveExpenses = (id) => async (dispatch) => {
+  dispatch({ type: ActionTypes.setIsLoading, payload: true });
+  const data = await DriveExpenseService.deleteDriveExpenses(id);
+  if (Array.isArray(data)) {
+    return dispatch({
+      type: ActionTypes.deleteDriveExpensesSuccess,
+      payload: data,
+    });
+  }
+  return dispatch({
+    type: ActionTypes.deleteDriveExpensesError,
+    payload: data,
+  });
 };
 
 export default {

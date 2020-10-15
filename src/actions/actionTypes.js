@@ -7,9 +7,12 @@ const ActionTypes = {
   setCurrentEditId: "SET_CURRENT_EDIT_ID",
   editCurrentEntry: "EDIT_CURRENT_ENTRY",
   exitCreateOrUpdateMode: "EXIT_CREATE_OR_UPDATE_MODE",
-  createOrUpdateDriveExpenses: "CREATE_OR_UPDATE_DRIVE_EXPENSES",
-  readDriveExpenses: "READ_DRIVE_EXPENSES",
-  deleteDriveExpenses: "DELETE_DRIVE_EXPENSES",
+  createOrUpdateDriveExpensesSuccess: "CREATE_OR_UPDATE_DRIVE_EXPENSES_SUCCESS",
+  createOrUpdateDriveExpensesError: "CREATE_OR_UPDATE_DRIVE_EXPENSES_ERROR",
+  readDriveExpensesSuccess: "READ_DRIVE_EXPENSES_SUCCESS",
+  readDriveExpensesError: "READ_DRIVE_EXPENSES_ERROR",
+  deleteDriveExpensesSuccess: "DELETE_DRIVE_EXPENSES_SUCCESS",
+  deleteDriveExpensesError: "DELETE_DRIVE_EXPENSES_ERROR",
 };
 
 export default ActionTypes;

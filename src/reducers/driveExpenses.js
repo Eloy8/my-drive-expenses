@@ -1,17 +1,18 @@
 import ActionTypes from "../actions/actionTypes";
-import DriveExpenseService from "../Declarations/services/DriveExpenseService";
 
 // Default Redux state
 const initialState = {
   addMode: false,
   editMode: false,
   expensesList: null,
-  isLoading: true,
+  isLoading: false,
   currentEditId: null,
+  hasCreateOrUpdateError: false,
+  hasDeleteError: false,
+  hasReadError: false,
 };
 
 const driveExpenses = (state = initialState, action) => {
-  const { expensesList } = state;
   switch (action.type) {
     case ActionTypes.setAddMode:
       return {
@@ -51,48 +52,56 @@ const driveExpenses = (state = initialState, action) => {
         editMode: true,
         currentEditId: action.payload,
       };
-    case ActionTypes.createOrUpdateDriveExpenses:
-      const data = action.payload;
-      let expensesListCopy = JSON.parse(JSON.stringify(expensesList));
-      // No existing id means that the entry must be created and added to array
-      if (!data.id) {
-        const newData = { ...data, id: Date.now() };
-        // Either adds new entry to existing array or creates a brand new one
-        if (expensesList && expensesList.length) {
-          // JSON parse and stringy to make a deep copy instead of shalow
-          expensesListCopy.push(newData);
-          DriveExpenseService.setDriveExpenses(expensesListCopy);
-        } else {
-          expensesListCopy = [newData];
-          DriveExpenseService.setDriveExpenses(expensesListCopy);
-        }
-        // If  id exists, it will be used as key to update entry
-      } else {
-        const entryIndex = expensesList.findIndex((entry) => entry.id === data.id);
-        expensesListCopy[entryIndex] = data;
-        DriveExpenseService.setDriveExpenses(expensesListCopy);
-      }
+    case ActionTypes.createOrUpdateDriveExpensesSuccess:
       return {
         ...state,
-        expensesList: expensesListCopy,
-      };
-    case ActionTypes.readDriveExpenses:
-      const newExpenseList = DriveExpenseService.getDriveExpenses();
-      return {
-        ...state,
-        expensesList: newExpenseList,
         isLoading: false,
+        expensesList: action.payload,
+        hasCreateOrUpdateError: false,
+        hasReadError: false,
+        hasDeleteError: false,
       };
-    case ActionTypes.deleteDriveExpenses:
-      const entryIndex = expensesList.findIndex(
-        (entry) => entry.id === action.payload
-      );
-      let expensesListDuplicate = JSON.parse(JSON.stringify(expensesList));
-      expensesListDuplicate.splice(entryIndex, 1);
-      DriveExpenseService.setDriveExpenses(expensesListDuplicate);
+    case ActionTypes.createOrUpdateDriveExpensesError:
       return {
         ...state,
-        expensesList: expensesListDuplicate,
+        isLoading: false,
+        hasCreateOrUpdateError: action.payload,
+        hasReadError: false,
+        hasDeleteError: false,
+      };
+    case ActionTypes.readDriveExpensesSuccess:
+      return {
+        ...state,
+        isLoading: false,
+        expensesList: action.payload,
+        hasReadError: false,
+        hasCreateOrUpdateError: false,
+        hasDeleteError: false,
+      };
+    case ActionTypes.readDriveExpensesError:
+      return {
+        ...state,
+        isLoading: false,
+        hasReadError: action.payload,
+        hasCreateOrUpdateError: false,
+        hasDeleteError: false,
+      };
+    case ActionTypes.deleteDriveExpensesSuccess:
+      return {
+        ...state,
+        isLoading: false,
+        expensesList: action.payload,
+        hasDeleteError: false,
+        hasCreateOrUpdateError: false,
+        hasReadError: false,
+      };
+    case ActionTypes.deleteDriveExpensesError:
+      return {
+        ...state,
+        isLoading: false,
+        hasDeleteError: action.payload,
+        hasCreateOrUpdateError: false,
+        hasReadError: false,
       };
     default:
       return state;
